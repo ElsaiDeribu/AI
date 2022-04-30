@@ -1,3 +1,5 @@
+from collections import deque
+
 class Node:
     def __init__(self, name):
         self.name = name
@@ -42,6 +44,8 @@ class Graph:
         right.connect(left)
         
     def dfs (self, startNode, requiredNode):
+        if startNode.name == requiredNode.name:
+            return startNode
         visited = set()
         st = []
         st.append(startNode.name)
@@ -49,21 +53,23 @@ class Graph:
             v = st.pop()
             if v not in visited:
                 visited.add(v)
-            for neighbourName in self.verticies[v].edge_list[1]:
+            for _, neighbourName in self.verticies[v].edge_list:
                 if neighbourName == requiredNode.name:
                     return self.verticies[neighbourName]
-                if self.verticies[neighbourName] not in visited:
-                    st.append(self.verticies[neighbourName])
+                if neighbourName not in visited:
+                    st.append(neighbourName)
         return 0
     
     def bfs(self, startNode, requiredNode):
+        if startNode.name == requiredNode.name:
+            return startNode
         visited = set()
-        queue = []
+        queue = deque()
         queue.append(startNode.name)
         visited.add(startNode.name)
         while queue:
-            v = queue.pop(0)
-            for neighbour in self.verticies[v].edge_list[1]:
+            v = queue.popleft()
+            for _,neighbour in self.verticies[v].edge_list:
                 if neighbour == requiredNode.name:
                     return self.verticies[neighbour]
                 if neighbour not in visited:
