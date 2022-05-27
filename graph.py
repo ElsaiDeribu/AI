@@ -55,13 +55,16 @@ class Graph:
     def dfs(self, startNode, requiredNode):
         
         self.shortest = [1] * power(10,5)
+        self.pathFound = False
         path = []
         
         def helper(givenNode, requiredNode, path):
             path.append(givenNode.name)
-            if givenNode.name == requiredNode.name:
-                if len(path) < len(self.shortest):
-                    self.shortest = path[:]
+            if givenNode.name == requiredNode.name and not self.pathFound:
+                self.shortest = path[:]
+                self.pathFound = True
+                # if len(path) < len(self.shortest):
+                #     self.shortest = path[:]
             
             for neighbor in givenNode.edge_list:
                 if neighbor[1] not in path:
@@ -73,7 +76,7 @@ class Graph:
         
         return self.shortest
     
-        
+    
     # def dfs (self, startNode, requiredNode):
         
     #     if startNode.name == requiredNode.name:
@@ -134,7 +137,7 @@ class Graph:
             for connnection in self.verticies[curr_v].edge_list:
                 neighbour = connnection[1]
                 neighbour_w = self.edges[(curr_v, neighbour)].weight
-                cand_w = last_w + neighbour_w # equivalent to d[curr_v] + n_w 
+                cand_w = last_w + neighbour_w 
         
                 if cand_w < distances[neighbour]:
                     distances[neighbour] = cand_w
@@ -170,7 +173,6 @@ class Graph:
     
         # print(readLocation)
         
-        
         def findHeuristic(node):
             
             lat1, lon1 = readLocations[requiredNode.name]
@@ -196,15 +198,17 @@ class Graph:
             if curr_v == requiredNode.name:
                 break
             for connnection in self.verticies[curr_v].edge_list:
-                
+            
                 neighbour = connnection[1]
-                neighbour_w = self.edges[(curr_v, neighbour)].weight + findHeuristic(neighbour)
-                cand_w = last_w + neighbour_w 
+                neighbour_w = self.edges[(curr_v, neighbour)].weight 
+                cand_w = last_w - findHeuristic(curr_v) + neighbour_w 
+                
+                # f = cand_w + findHeuristic(neighbour)
                 
                 if cand_w < distances[neighbour]:
-                    distances[neighbour] = cand_w
+                    distances[neighbour] = cand_w 
                     predecessors[neighbour] = curr_v
-                    heapq.heappush(heap, (cand_w, neighbour))
+                    heapq.heappush(heap, (cand_w  + findHeuristic(neighbour), neighbour))
 
         # print(d)
         # print(p)
@@ -301,12 +305,11 @@ for connection in readEdges:
     
 
 
-
 a = m.verticies["Arad"]
 b = m.verticies["Bucharest"]
 
 
-ans = m.astar(a, b)
+ans = m.dfs(a, b)
 print(ans)
 
 

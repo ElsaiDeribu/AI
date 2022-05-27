@@ -17,7 +17,7 @@ Mehadia Drobeta 75
 Drobeta Craiova 120 
 Craiova Pitesti 138 
 Craiova Rimnicu-Vilcea 146 
-Rimnicu-Vilcea Sibiu 80 Bucharest Urziceni 85 
+Rimnicu-Vilcea Sibiu 80 
+Bucharest Urziceni 85 
 Urziceni Hirsova 98 
 Hirsova Eforie 86 
-Bucharest Urziceni 85
