@@ -1,4 +1,7 @@
 from collections import deque
+import heapq
+from numpy import Infinity, power, short
+from math import cos, asin, sqrt, pi
 
 class Node:
     def __init__(self, name):
@@ -116,9 +119,109 @@ class Graph:
             
         return 0
     
-    def djikstra(startNode, destination):
-        shortest_distance = {}
+    def dijkstra(self, startNode, requiredNode):
         
+        heap = []
+        distances = {k: power(10,5) for k in self.verticies.keys()}
+        predecessors = {}
+        distances[startNode.name] = 0 
+        heapq.heappush(heap, (0, startNode.name))
+
+        while heap:
+            last_w, curr_v = heapq.heappop(heap)
+            if curr_v == requiredNode.name:
+                break
+            for connnection in self.verticies[curr_v].edge_list:
+                neighbour = connnection[1]
+                neighbour_w = self.edges[(curr_v, neighbour)].weight
+                cand_w = last_w + neighbour_w # equivalent to d[curr_v] + n_w 
+        
+                if cand_w < distances[neighbour]:
+                    distances[neighbour] = cand_w
+                    predecessors[neighbour] = curr_v
+                    heapq.heappush(heap, (cand_w, neighbour))
+
+        # print(d)
+        # print(p)
+        path = []
+        path.append(requiredNode.name)
+        
+        def recur(destination):
+            path.append(predecessors[destination])
+            if predecessors[destination] == startNode.name:
+                return
+            recur(predecessors[destination])
+            
+        recur(requiredNode.name)
+        return (distances[requiredNode.name], path[::-1])
+
+
+            
+    def astar(self, startNode, requiredNode):
+        
+        readLocations = {}
+        
+        file = open('cityLocations.txt', 'r')
+        f = file.readlines()
+
+        for line in f:
+            line = (line.strip()).split(' ')
+            readLocations[line[0]] = (float(line[1]), float(line[2]))
+    
+        # print(readLocation)
+        
+        
+        def findHeuristic(node):
+            
+            lat1, lon1 = readLocations[requiredNode.name]
+            lat2, lon2 = readLocations[node]
+            
+            return distance(lat1, lon1, lat2, lon2)
+        
+        def distance(lat1, lon1, lat2, lon2):
+            p = pi/180
+            a = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * cos(lat2*p) * (1-cos((lon2-lon1)*p))/2
+            return 12742 * asin(sqrt(a)) 
+
+
+        
+        heap = []
+        distances = {node: power(10,5) for node in self.verticies.keys()}
+        predecessors = {}
+        distances[startNode.name] = 0 
+        heapq.heappush(heap, (0 + findHeuristic(startNode.name), startNode.name))
+
+        while heap:
+            last_w, curr_v = heapq.heappop(heap)
+            if curr_v == requiredNode.name:
+                break
+            for connnection in self.verticies[curr_v].edge_list:
+                
+                neighbour = connnection[1]
+                neighbour_w = self.edges[(curr_v, neighbour)].weight + findHeuristic(neighbour)
+                cand_w = last_w + neighbour_w 
+                
+                if cand_w < distances[neighbour]:
+                    distances[neighbour] = cand_w
+                    predecessors[neighbour] = curr_v
+                    heapq.heappush(heap, (cand_w, neighbour))
+
+        # print(d)
+        # print(p)
+        path = []
+        path.append(requiredNode.name)
+        
+        def recur(destination):
+            path.append(predecessors[destination])
+            if predecessors[destination] == startNode.name:
+                return
+            recur(predecessors[destination])
+            
+        recur(requiredNode.name)
+        
+        
+        return (distances[requiredNode.name], path[::-1])
+            
         
         
     def search(self, a, b):
@@ -134,23 +237,23 @@ class Graph:
 
 
 
-a = Node('A')
-b = Node('B')
-c = Node('C') 
-d = Node('D')
-e = Node('E')
-k = Node('K')
-l = Node('L')
+# a = Node('A')
+# b = Node('B')
+# c = Node('C') 
+# d = Node('D')
+# e = Node('E')
+# k = Node('K')
+# l = Node('L')
 
-g = Graph()
-g.add_edge(a, e)
-g.add_edge(a, c)
-g.add_edge(a, d)
-g.add_edge(b, c)
-g.add_edge(b, e)
-g.add_edge(b, l)
-g.add_edge(l, k)
-g.add_edge(k, e)
+# g = Graph()
+# g.add_edge(a, e)
+# g.add_edge(a, c)
+# g.add_edge(a, d)
+# g.add_edge(b, c)
+# g.add_edge(b, e)
+# g.add_edge(b, l)
+# g.add_edge(l, k)
+# g.add_edge(k, e)
 
 # print(g)
 # for iv, (k, v) in enumerate(g.verticies.items()):
@@ -165,6 +268,9 @@ g.add_edge(k, e)
 # ans = g.bfs(d,l)
 
 # print(ans)
+
+
+
 
 
 
@@ -196,23 +302,12 @@ for connection in readEdges:
 
 
 
-a = m.verticies["Neamt"]
-b = m.verticies["Craiova"]
+a = m.verticies["Arad"]
+b = m.verticies["Bucharest"]
 
 
-ans = m.bfs(a, b)
+ans = m.astar(a, b)
 print(ans)
-
-# ans = m.dfs(a, b)
-# print(ans)
-
-
-
-
-
-
-
-
 
 
 
