@@ -1,6 +1,6 @@
 from collections import deque
 import heapq
-from numpy import Infinity, power, short
+from numpy import power
 from math import cos, asin, sqrt, pi
 
 class Node:
@@ -47,58 +47,25 @@ class Graph:
         self.verticies[left.name].connect(right)
         self.verticies[right.name].connect(left)
         
-        # print(self.verticies[left.name].edge_list)
-        # print(left.edge_list)
-        
-        
         
     def dfs(self, startNode, requiredNode):
         
-        self.shortest = [1] * power(10,5)
-        self.pathFound = False
         path = []
         
         def helper(givenNode, requiredNode, path):
             path.append(givenNode.name)
-            if givenNode.name == requiredNode.name and not self.pathFound:
-                self.shortest = path[:]
-                self.pathFound = True
-                # if len(path) < len(self.shortest):
-                #     self.shortest = path[:]
+            if givenNode.name == requiredNode.name:
+                return path[:]
             
             for neighbor in givenNode.edge_list:
                 if neighbor[1] not in path:
-                    helper(self.verticies[neighbor[1]], requiredNode, path[:])
+                    temp =  helper(self.verticies[neighbor[1]], requiredNode, path[:])
+                    if temp:
+                        return temp
         
             path.pop()
                     
-        helper(startNode, requiredNode, path)
-        
-        return self.shortest
-    
-    
-    # def dfs (self, startNode, requiredNode):
-        
-    #     if startNode.name == requiredNode.name:
-    #         return startNode
-    #     path = [] 
-    #     visited = set()
-    #     st = []
-    #     st.append(startNode.name)
-    #     path.append(startNode.name)
-    #     while st:
-    #         v = st.pop()
-    #         if v not in visited:
-    #             visited.add(v)
-    #             path.append(v)
-    #         for _, neighbourName in self.verticies[v].edge_list:
-    #             if neighbourName == requiredNode.name:
-    #                 return self.verticies[neighbourName]
-    #             if neighbourName not in visited:
-    #                 st.append(neighbourName)
-    #     return 0
-    
-    
+        return helper(startNode, requiredNode, path)
     
     
     def bfs(self, startNode, requiredNode):
@@ -117,9 +84,6 @@ class Graph:
                     queue.append((neighbour, path[:]))
                     visited.add(neighbour)
     
-            
-        print(visited)
-            
         return 0
     
     def dijkstra(self, startNode, requiredNode):
@@ -144,8 +108,6 @@ class Graph:
                     predecessors[neighbour] = curr_v
                     heapq.heappush(heap, (cand_w, neighbour))
 
-        # print(d)
-        # print(p)
         path = []
         path.append(requiredNode.name)
         
@@ -155,7 +117,9 @@ class Graph:
                 return
             recur(predecessors[destination])
             
-        recur(requiredNode.name)
+        if predecessors:
+            recur(requiredNode.name)
+        
         return (distances[requiredNode.name], path[::-1])
 
 
@@ -170,8 +134,7 @@ class Graph:
         for line in f:
             line = (line.strip()).split(' ')
             readLocations[line[0]] = (float(line[1]), float(line[2]))
-    
-        # print(readLocation)
+        
         
         def findHeuristic(node):
             
@@ -210,112 +173,18 @@ class Graph:
                     predecessors[neighbour] = curr_v
                     heapq.heappush(heap, (cand_w  + findHeuristic(neighbour), neighbour))
 
-        # print(d)
-        # print(p)
         path = []
         path.append(requiredNode.name)
-        
+
         def recur(destination):
             path.append(predecessors[destination])
             if predecessors[destination] == startNode.name:
                 return
             recur(predecessors[destination])
-            
-        recur(requiredNode.name)
-        
+        if predecessors:
+            recur(requiredNode.name)
         
         return (distances[requiredNode.name], path[::-1])
             
-        
-        
-    def search(self, a, b):
-        pass
-
-    def to_aj_matrix(self):
-        pass
 
 
-
-
-
-
-
-
-# a = Node('A')
-# b = Node('B')
-# c = Node('C') 
-# d = Node('D')
-# e = Node('E')
-# k = Node('K')
-# l = Node('L')
-
-# g = Graph()
-# g.add_edge(a, e)
-# g.add_edge(a, c)
-# g.add_edge(a, d)
-# g.add_edge(b, c)
-# g.add_edge(b, e)
-# g.add_edge(b, l)
-# g.add_edge(l, k)
-# g.add_edge(k, e)
-
-# print(g)
-# for iv, (k, v) in enumerate(g.verticies.items()):
-#     print(v.name)
-
-# for iv, (k, edge) in enumerate(g.edges.items()):
-#     print(edge.right.name, edge.left.name, edge.weight)
-
-
-
-
-# ans = g.bfs(d,l)
-
-# print(ans)
-
-
-
-
-
-
-m = Graph()
-
-file = open('graph.txt', 'r')
-f = file.readlines()
-
-readEdges = []
-for line in f:
-    readEdges.append(line.strip())
-        
-# print(readEdges)
-
-for connection in readEdges:
-    temp = connection.split(' ')
-    
-    if len(temp) == 3:
-        edge = temp
-        a = Node(edge[0])
-        b = Node(edge[1])
-        m.add_edge(a, b, int(edge[2]))
-        
-    else:
-        node = temp
-        a = Node(node[0])
-        m.add_node(a)
-    
-
-
-a = m.verticies["Arad"]
-b = m.verticies["Bucharest"]
-
-
-ans = m.dfs(a, b)
-print(ans)
-
-
-
-# for iv, (k, v) in enumerate(m.verticies.items()):
-#     print(v.name)
-
-# for iv, (k, edge) in enumerate(m.edges.items()):
-#     print(edge.right.name, edge.left.name, edge.weight)
