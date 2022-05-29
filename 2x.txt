@@ -21,9 +21,7 @@ Sululta Mojo 80
 Awash Adama 85 
 Adama Metehara 98 
 Metehara JigJiga 86
-
-JigJiga Neamt  65
-
+JigJiga Neamt 65
 Urziceni Vaslui 142 
 Vaslui Iasi 92 
 Iasi Neamt 87

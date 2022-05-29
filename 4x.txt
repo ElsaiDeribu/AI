@@ -21,9 +21,7 @@ N_8 N_5 80
 N_7 N_1 85 
 N_1 N_19 98 
 N_19 N_20 86 
-
 N_20 Node_4 65
-
 Node_1 Node_2 142 
 Node_2 Node_3 92 
 Node_3 Node_4 87
@@ -47,9 +45,7 @@ Node_8 Node_5 80
 Node_7 Node_1 85 
 Node_1 Node_19 98 
 Node_19 Node_20 86
-
 Node_20 Dukem 65
-
 Adama DreDewa 142 
 DreDewa AddisAbaba 92 
 AddisAbaba Dukem 87
@@ -73,9 +69,7 @@ Sululta Mojo 80
 Awash Adama 85 
 Adama Metehara 98 
 Metehara JigJiga 86 
-
-JigJiga Neamt  65
-
+JigJiga Neamt 65
 Urziceni Vaslui 142 
 Vaslui Iasi 92 
 Iasi Neamt 87

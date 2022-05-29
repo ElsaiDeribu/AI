@@ -51,21 +51,21 @@ class Graph:
     def dfs(self, startNode, requiredNode):
         
         path = []
-        
-        def helper(givenNode, requiredNode, path):
+        visited = set()
+        def helper(givenNode, requiredNode):
             path.append(givenNode.name)
             if givenNode.name == requiredNode.name:
-                return path[:]
-            
+                return path
+            visited.add(givenNode.name)
             for neighbor in givenNode.edge_list:
-                if neighbor[1] not in path:
-                    temp =  helper(self.verticies[neighbor[1]], requiredNode, path[:])
+                if neighbor[1] not in visited:
+                    temp =  helper(self.verticies[neighbor[1]], requiredNode)
                     if temp:
                         return temp
         
             path.pop()
                     
-        return helper(startNode, requiredNode, path)
+        return helper(startNode, requiredNode)
     
     
     def bfs(self, startNode, requiredNode):
@@ -83,11 +83,10 @@ class Graph:
                 if neighbour not in visited:
                     queue.append((neighbour, path[:]))
                     visited.add(neighbour)
-    
         return 0
     
+    
     def dijkstra(self, startNode, requiredNode):
-        
         heap = []
         distances = {k: power(10,5) for k in self.verticies.keys()}
         predecessors = {}
@@ -122,13 +121,12 @@ class Graph:
         
         return (distances[requiredNode.name], path[::-1])
 
-
             
-    def astar(self, startNode, requiredNode):
+    def astar(self, locations, startNode, requiredNode):
         
         readLocations = {}
         
-        file = open('cityLocations.txt', 'r')
+        file = open(locations, 'r')
         f = file.readlines()
 
         for line in f:
@@ -147,8 +145,6 @@ class Graph:
             p = pi/180
             a = 0.5 - cos((lat2-lat1)*p)/2 + cos(lat1*p) * cos(lat2*p) * (1-cos((lon2-lon1)*p))/2
             return 12742 * asin(sqrt(a)) 
-
-
         
         heap = []
         distances = {node: power(10,5) for node in self.verticies.keys()}
@@ -165,8 +161,6 @@ class Graph:
                 neighbour = connnection[1]
                 neighbour_w = self.edges[(curr_v, neighbour)].weight 
                 cand_w = last_w - findHeuristic(curr_v) + neighbour_w 
-                
-                # f = cand_w + findHeuristic(neighbour)
                 
                 if cand_w < distances[neighbour]:
                     distances[neighbour] = cand_w 
